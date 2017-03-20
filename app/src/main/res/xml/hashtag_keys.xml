@@ -1,0 +1,26 @@
+<Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
+          android:horizontalGap="0px"
+          android:keyHeight="60dp"
+          android:keyWidth="10%p"
+          android:verticalGap="0px">
+    <Row android:rowEdgeFlags="bottom">
+        <Key
+            android:codes="-5"
+            android:keyEdgeFlags="left"
+            android:keyLabel="Delete"
+            android:keyWidth="15%p"/>
+        <Key
+            android:codes="257"
+            android:keyLabel="#HASHTAGS"
+            android:keyWidth="60%p"/>
+        <Key
+            android:codes="258"
+            android:keyLabel="Edit"
+            android:keyWidth="10%p"/>
+        <Key
+            android:codes="-4"
+            android:keyEdgeFlags="right"
+            android:keyLabel="ENTER"
+            android:keyWidth="15%p"/>
+    </Row>
+</Keyboard>
