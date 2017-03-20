@@ -1,15 +1,20 @@
 package com.emexezidis.hashtagkeyboard;
 
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
-    String defaultHashtagList = "#test #default #hashtags";
+    private static final String TAG = "Change IME Tag";
+    String defaultHashtagList = "#hello #there #you #can #edit #these #hashtags";
     EditText mEditText;
     String processedText;
 
@@ -23,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
         mEditText = new EditText(this);
         mEditText = (EditText) findViewById(R.id.saved_hashtags);
         mEditText.setText(getSharedPreferenceString("hashtags"));
+
+        backToPreviousIme();
 
         Button save = (Button) findViewById(R.id.saveButton);
         save.setOnClickListener(new View.OnClickListener() {
@@ -45,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFocusChange(View view, boolean focus) {
                 if (!focus) {
                     saveSharedPreference("hashtags", mEditText.getText().toString());
+                } else {
                 }
             }
         });
@@ -81,15 +89,8 @@ public class MainActivity extends AppCompatActivity {
     private void firstRunSetup() {
         if (getSharedPreferenceInt("firstRun") == 0) {
             saveSharedPreference("hashtags", defaultHashtagList);
+            saveSharedPreferenceInt("firstRun", 1);
         }
-    }
-
-    private void saveSharedPreference(String tag, String text) {
-
-        SharedPreferences sharedPref = this.getSharedPreferences("hashkeyboard", 0);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(tag, text);
-        editor.apply();
     }
 
     private String getSharedPreferenceString(String tag) {
@@ -110,9 +111,42 @@ public class MainActivity extends AppCompatActivity {
         return (sharedPref.getInt(tag, 0));
     }
 
+    private void saveSharedPreferenceInt(String tag, int value) {
+
+        SharedPreferences sharedPref = this.getSharedPreferences("hashkeyboard", 0);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putInt(tag, value);
+        editor.apply();
+    }
+
+    private void saveSharedPreference(String tag, String text) {
+
+        SharedPreferences sharedPref = this.getSharedPreferences("hashkeyboard", 0);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(tag, text);
+        editor.apply();
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
         saveSharedPreference("hashtags", mEditText.getText().toString());
+    }
+
+    private void backToPreviousIme() {
+        try {
+            InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            final IBinder token = this.getWindow().getAttributes().token;
+            imm.switchToLastInputMethod(token);
+        } catch (Throwable t) { // java.lang.NoSuchMethodError if API_level<11
+            Log.e(TAG,"cannot set the previous input method:");
+            t.printStackTrace();
+
+            //TODO: Make this exception handling better
+            InputMethodManager imeManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imeManager != null) {
+                imeManager.showInputMethodPicker();
+            }
+        }
     }
 }

@@ -16,15 +16,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hashtag List:"
-        android:textStyle="normal|bold"/>
+        android:textStyle="normal|bold"
+        android:textSize="30sp"/>
 
     <EditText
         android:text="#hashtags"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/saved_hashtags"
         android:layout_below="@+id/text_title"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentLeft="true"
+        android:textSize="30sp"
+        android:typeface="monospace"/>
 
     <Button
         android:layout_width="wrap_content"

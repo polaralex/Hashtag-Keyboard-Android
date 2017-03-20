@@ -50,9 +50,11 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
                 Intent intent = new Intent(this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
+                break;
             case insertHashtagButton:
                 hashtags = getCurrentHashtags();
                 ic.commitText(hashtags, 1);
+                break;
             default:
         }
     }
