@@ -34,4 +34,15 @@
         android:layout_below="@+id/saved_hashtags"
         android:layout_alignParentLeft="true"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/hashtagifyButton"
+        android:text="Hashtagify"
+        android:layout_below="@+id/saved_hashtags"
+        android:layout_toRightOf="@+id/saveButton"
+        android:layout_toEndOf="@+id/saveButton"
+        android:layout_marginLeft="17dp"
+        android:layout_marginStart="17dp"/>
+
 </RelativeLayout>
