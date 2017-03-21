@@ -20,6 +20,7 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
 
     @Override
     public View onCreateInputView() {
+
         KeyboardView kv = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard, null);
         Keyboard keyboard = new Keyboard(this, R.xml.hashtag_keys);
 
@@ -34,27 +35,37 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
 
     @Override
     public void onKey(int primaryCode, int[] keyCodes) {
+
         ic = getCurrentInputConnection();
 
         switch (primaryCode) {
             case Keyboard.KEYCODE_DELETE:
+
                 int lengthToDelete = checkForLengthToDelete();
                 ic.deleteSurroundingText(lengthToDelete, 0);
                 break;
+
             case Keyboard.KEYCODE_SHIFT:
                 break;
+
             case Keyboard.KEYCODE_DONE:
+
                 ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
                 break;
+
             case editHashtagButton:
+
                 Intent intent = new Intent(this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 break;
+
             case insertHashtagButton:
+
                 hashtags = getCurrentHashtags();
                 ic.commitText(hashtags, 1);
                 break;
+
             default:
         }
     }
@@ -69,7 +80,7 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
 
         String text = ic.getTextBeforeCursor(100, 0).toString();
 
-        if(text.length() != 0) {
+        if (text.length() != 0) {
             Log.e("DEBUG", "NO INPUT");
 
             int textLength = text.length();
