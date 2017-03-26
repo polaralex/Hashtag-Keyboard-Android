@@ -14,6 +14,7 @@ public class MainActivity extends AppCompatActivity {
 
     String defaultHashtagList = "#hello #there #you #can #edit #these #hashtags";
     String processedText;
+    SharedPreferences sharedPref;
 
     private static final String TAG = "Change IME Tag";
 
@@ -23,11 +24,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(final Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+        Bundle bundle = getIntent().getExtras();
 
-        if (getIntent() != null) {
-            if (getIntent().getStringExtra("changeIme").equals("true")) {
+        sharedPref = getSharedPreferences("hashkeyboard", Context.MODE_PRIVATE);
+
+        if (bundle != null) {
+
+            if (bundle.getString("changeIme").equals("true")) {
                 backToPreviousIme();
+                finish();
             }
+
         } else {
 
             getSupportActionBar().hide();
@@ -49,11 +56,6 @@ public class MainActivity extends AppCompatActivity {
 
         String[] stringArray = input.split("\\s+");
 
-        System.out.println("1st Regex: ");
-        for (String string : stringArray) {
-            System.out.println(string);
-        }
-
         for (String string : stringArray) {
             if (string.contains("#")) {
                 processedText += (string + " ");
@@ -73,15 +75,21 @@ public class MainActivity extends AppCompatActivity {
     private void firstRunSetup() {
 
         if (getSharedPreferenceInt("firstRun") == 0) {
-            saveSharedPreference("hashtags", "template0");
-            saveSharedPreferenceInt("numberOfTemplates", 1);
-            saveSharedPreferenceInt("firstRun", 1);
+
+            // Loading the default values into the templates:
+            saveSharedPreference("template0", defaultHashtagList);
+
+            // Empty Strings for not-yet-used templates:
+            for(Integer i=1; i<5; i++) {
+                editTemplate(i, "#empty");
+            }
+
+            saveSharedPreference("firstRun", 1);
         }
     }
 
-    private void addTemplate(String content) {
-        Integer currentNumberOfTemplates = getSharedPreferenceInt("numberOfTemplates");
-        saveSharedPreference("template" + ((Integer)(currentNumberOfTemplates+1)).toString(), content);
+    private void editTemplate(Integer template, String content) {
+        saveSharedPreference("template" + template.toString(), content);
     }
 
     protected String getSharedPreferenceString(String tag) {
@@ -98,13 +106,11 @@ public class MainActivity extends AppCompatActivity {
 
     protected int getSharedPreferenceInt(String tag) {
 
-        SharedPreferences sharedPref = this.getSharedPreferences("hashkeyboard", 0);
         return (sharedPref.getInt(tag, 0));
     }
 
-    protected void saveSharedPreferenceInt(String tag, int value) {
+    protected void saveSharedPreference(String tag, int value) {
 
-        SharedPreferences sharedPref = this.getSharedPreferences("hashkeyboard", 0);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(tag, value);
         editor.apply();
@@ -112,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
 
     protected void saveSharedPreference(String tag, String text) {
 
-        SharedPreferences sharedPref = this.getSharedPreferences("hashkeyboard", 0);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(tag, text);
         editor.apply();
@@ -143,5 +148,4 @@ public class MainActivity extends AppCompatActivity {
 
         super.onPause();
     }
-
 }

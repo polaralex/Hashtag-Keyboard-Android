@@ -1,17 +1,13 @@
 package com.emexezidis.hashtagkeyboard;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
-import android.os.IBinder;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputConnection;
-import android.view.inputmethod.InputMethodManager;
 
 public class HashKeyboardService extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
 
@@ -79,7 +75,7 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
 
     private String getCurrentHashtags() {
         SharedPreferences sharedPref = getSharedPreferences("hashkeyboard", 0);
-        hashtags = sharedPref.getString("hashtags", "empty");
+        hashtags = sharedPref.getString("currentHashtags", "empty");
         return (hashtags);
     }
 
