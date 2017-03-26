@@ -2,38 +2,45 @@ package com.emexezidis.hashtagkeyboard;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "Change IME Tag";
     String defaultHashtagList = "#hello #there #you #can #edit #these #hashtags";
     String processedText;
+
+    private static final String TAG = "Change IME Tag";
 
     FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
-        firstRunSetup();
-        showFragment();
+        if (getIntent() != null) {
+            if (getIntent().getStringExtra("changeIme").equals("true")) {
+                backToPreviousIme();
+            }
+        } else {
+
+            getSupportActionBar().hide();
+            firstRunSetup();
+            showFragment();
+        }
     }
 
     private void showFragment() {
 
         fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(android.R.id.content, new PopupFragment()).commit();
+        ft.add(android.R.id.content, new HashtagPanelFragment()).commit();
     }
 
     protected String hashtagifyString(String input) {
@@ -66,9 +73,15 @@ public class MainActivity extends AppCompatActivity {
     private void firstRunSetup() {
 
         if (getSharedPreferenceInt("firstRun") == 0) {
-            saveSharedPreference("hashtags", defaultHashtagList);
+            saveSharedPreference("hashtags", "template0");
+            saveSharedPreferenceInt("numberOfTemplates", 1);
             saveSharedPreferenceInt("firstRun", 1);
         }
+    }
+
+    private void addTemplate(String content) {
+        Integer currentNumberOfTemplates = getSharedPreferenceInt("numberOfTemplates");
+        saveSharedPreference("template" + ((Integer)(currentNumberOfTemplates+1)).toString(), content);
     }
 
     protected String getSharedPreferenceString(String tag) {
@@ -105,12 +118,6 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    @Override
-    protected void onPause() {
-
-        super.onPause();
-    }
-
     private void backToPreviousIme() {
 
         try {
@@ -126,6 +133,15 @@ public class MainActivity extends AppCompatActivity {
             if (imeManager != null) {
                 imeManager.showInputMethodPicker();
             }
+
+            finish();
         }
     }
+
+    @Override
+    protected void onPause() {
+
+        super.onPause();
+    }
+
 }

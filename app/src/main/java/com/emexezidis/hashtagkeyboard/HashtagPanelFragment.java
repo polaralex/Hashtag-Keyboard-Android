@@ -1,16 +1,21 @@
 package com.emexezidis.hashtagkeyboard;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.ListViewCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 
-public class PopupFragment extends Fragment{
+import java.util.ArrayList;
+
+public class HashtagPanelFragment extends Fragment{
 
     private EditText mEditText;
     private MainActivity managingActivity;
@@ -18,9 +23,7 @@ public class PopupFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
     @Override
@@ -29,6 +32,12 @@ public class PopupFragment extends Fragment{
         managingActivity = ((MainActivity)getActivity());
 
         super.onViewCreated(view, savedInstanceState);
+
+        ArrayList<String> arrayList = new ArrayList<>();
+        populateArrayList(arrayList);
+
+        ArrayAdapter adapter = new ArrayAdapter<String>(managingActivity, R.layout.listview_layout, arrayList);
+        ListView listview = (ListView) view.findViewById(R.id.listview);
 
         mEditText = (EditText) view.findViewById(R.id.saved_hashtags);
         mEditText.setText(managingActivity.getSharedPreferenceString("hashtags"));
@@ -58,6 +67,15 @@ public class PopupFragment extends Fragment{
                 }
             }
         });
+    }
+
+    private void populateArrayList(ArrayList<String> arrayList) {
+
+        Integer number = managingActivity.getSharedPreferenceInt("numberOfTemplates");
+
+        for (Integer i=0; i<number; i++) {
+            arrayList.add(managingActivity.getSharedPreferenceString("template"+i.toString()));
+        }
     }
 
     @Override

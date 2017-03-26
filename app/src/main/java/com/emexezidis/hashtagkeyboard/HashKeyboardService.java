@@ -1,14 +1,17 @@
 package com.emexezidis.hashtagkeyboard;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.InputMethodManager;
 
 public class HashKeyboardService extends InputMethodService implements KeyboardView.OnKeyboardActionListener {
 
@@ -37,6 +40,7 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
     public void onKey(int primaryCode, int[] keyCodes) {
 
         ic = getCurrentInputConnection();
+        Intent intent;
 
         switch (primaryCode) {
             case Keyboard.KEYCODE_DELETE:
@@ -50,12 +54,15 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
 
             case Keyboard.KEYCODE_DONE:
 
-                ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
+                intent = new Intent(this, MainActivity.class);
+                intent.putExtra("changeIme","true");
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
                 break;
 
             case editHashtagButton:
 
-                Intent intent = new Intent(this, MainActivity.class);
+                intent = new Intent(this, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 break;

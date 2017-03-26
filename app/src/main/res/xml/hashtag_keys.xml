@@ -12,11 +12,11 @@
         <Key
             android:codes="257"
             android:keyLabel="#HASHTAGS"
-            android:keyWidth="60%p"/>
+            android:keyWidth="55%p"/>
         <Key
             android:codes="258"
             android:keyLabel="Edit"
-            android:keyWidth="10%p"/>
+            android:keyWidth="15%p"/>
         <Key
             android:codes="-4"
             android:keyEdgeFlags="right"
