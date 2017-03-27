@@ -43,6 +43,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void firstRunSetup() {
+
+        if (getSharedPreferenceInt("firstRun") == 0) {
+
+            // Loading the default values into the templates:
+            saveSharedPreference("template0", defaultHashtagList);
+
+            // Empty Strings for not-yet-used templates:
+            for(Integer i=1; i<5; i++) {
+                editTemplate(i, "#empty");
+            }
+
+            saveSharedPreference("selectedTemplate", 1);
+            saveSharedPreference("firstRun", 1);
+        }
+    }
+
     private void showFragment() {
 
         fragmentManager = getSupportFragmentManager();
@@ -72,22 +89,6 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    private void firstRunSetup() {
-
-        if (getSharedPreferenceInt("firstRun") == 0) {
-
-            // Loading the default values into the templates:
-            saveSharedPreference("template0", defaultHashtagList);
-
-            // Empty Strings for not-yet-used templates:
-            for(Integer i=1; i<5; i++) {
-                editTemplate(i, "#empty");
-            }
-
-            saveSharedPreference("firstRun", 1);
-        }
-    }
-
     private void editTemplate(Integer template, String content) {
         saveSharedPreference("template" + template.toString(), content);
     }
@@ -97,11 +98,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPref = this.getSharedPreferences("hashkeyboard", 0);
         String savedValue = sharedPref.getString(tag, "empty");
 
-        if (savedValue.equals("empty")) {
-            return ("");
-        } else {
-            return savedValue;
-        }
+        return savedValue;
     }
 
     protected int getSharedPreferenceInt(String tag) {
