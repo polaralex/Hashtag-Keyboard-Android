@@ -1,8 +1,8 @@
 # Hashashash - Android Hashtag Keyboard
 #wow #so #hashtag #much #followers
 
-![Hashhashash](http://imgur.com/KNXIC7f)
+![Hashhashash](http://i.imgur.com/KNXIC7f.png)
 
 #Hashboard is an Android keyboard (IME) that can type a list of hashtags, into any Instagram post, with only one-click.
 
-![Main UI](http://imgur.com/xhlkZTZ)
+![Main UI](http://i.imgur.com/xhlkZTZ.png)
