@@ -1,8 +1,8 @@
 package com.emexezidis.hashtagkeyboard;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,17 +19,18 @@ public class PopupFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
-        return view;
+        return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        managingActivity = ((MainActivity)getActivity());
-
         super.onViewCreated(view, savedInstanceState);
 
+        // Basic Initialization
+        // (I use a reference to the calling activity to use its
+        // public methods):
+        managingActivity = ((MainActivity)getActivity());
         mEditText = (EditText) view.findViewById(R.id.saved_hashtags);
         mEditText.setText(managingActivity.getSharedPreferenceString("hashtags"));
 
@@ -46,16 +47,7 @@ public class PopupFragment extends Fragment{
             @Override
             public void onClick(View view) {
                 managingActivity.saveSharedPreference("hashtags", mEditText.getText().toString());
-            }
-        });
-
-        mEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean focus) {
-                if (!focus) {
-                    managingActivity.saveSharedPreference("hashtags", mEditText.getText().toString());
-                } else {
-                }
+                showSnackbar("Hashtag template saved.");
             }
         });
     }
@@ -64,5 +56,12 @@ public class PopupFragment extends Fragment{
     public void onPause() {
         super.onPause();
         managingActivity.saveSharedPreference("hashtags", mEditText.getText().toString());
+    }
+
+    private void showSnackbar(String text) {
+        Snackbar snackbar = Snackbar
+                .make(managingActivity.findViewById(android.R.id.content), text, Snackbar.LENGTH_SHORT);
+
+        snackbar.show();
     }
 }

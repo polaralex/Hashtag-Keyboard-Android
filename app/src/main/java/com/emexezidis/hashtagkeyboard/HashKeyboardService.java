@@ -6,7 +6,6 @@ import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputConnection;
 
@@ -17,6 +16,8 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
 
     private String hashtags;
     private InputConnection ic;
+
+    Intent intent;
 
     @Override
     public View onCreateInputView() {
@@ -39,24 +40,33 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
         ic = getCurrentInputConnection();
 
         switch (primaryCode) {
+
             case Keyboard.KEYCODE_DELETE:
 
                 int lengthToDelete = checkForLengthToDelete();
                 ic.deleteSurroundingText(lengthToDelete, 0);
                 break;
 
-            case Keyboard.KEYCODE_SHIFT:
-                break;
-
             case Keyboard.KEYCODE_DONE:
 
-                ic.sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
+                // Show Change IME screen:
+                intent = new Intent(this, MainActivity.class);
+
+                if (MainActivity.isActivityVisible()) {
+                    MainActivity.getActivityInstance().changeIme();
+                } else {
+                    System.out.println("Going to send a Stay Open intent");
+                    intent.putExtra("changeImeAndClose", true);
+                }
+
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
                 break;
 
             case editHashtagButton:
 
-                Intent intent = new Intent(this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent = new Intent(this, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 break;
 
@@ -71,6 +81,7 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
     }
 
     private String getCurrentHashtags() {
+
         SharedPreferences sharedPref = getSharedPreferences("hashkeyboard", 0);
         hashtags = sharedPref.getString("hashtags", "empty");
         return (hashtags);

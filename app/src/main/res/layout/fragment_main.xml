@@ -1,51 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:id="@+id/activity_main"
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.emexezidis.hashtagkeyboard.MainActivity">
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hashtag List:"
-        android:textStyle="normal|bold"
-        android:textSize="30sp"/>
-
-    <EditText
-        android:text="#hashtags"
+    <RelativeLayout
+        android:id="@+id/activity_main"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/saved_hashtags"
-        android:layout_below="@+id/text_title"
-        android:layout_alignParentLeft="true"
-        android:textSize="30sp"
-        android:typeface="monospace"/>
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context="com.emexezidis.hashtagkeyboard.MainActivity">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/saveButton"
-        android:text="Save"
-        android:layout_below="@+id/saved_hashtags"
-        android:layout_alignParentLeft="true"/>
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/main_screen_title"
+            android:textSize="30sp"
+            android:textStyle="normal|bold"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/hashtagifyButton"
-        android:text="Hashtagify"
-        android:layout_below="@+id/saved_hashtags"
-        android:layout_toRightOf="@+id/saveButton"
-        android:layout_toEndOf="@+id/saveButton"
-        android:layout_marginLeft="17dp"
-        android:layout_marginStart="17dp"/>
+        <EditText
+            android:id="@+id/saved_hashtags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/text_title"
+            android:text="@string/hashtags_edittext"
+            android:textSize="30sp"
+            android:typeface="monospace"
+            android:inputType="text"/>
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/saved_hashtags"
+            android:text="@string/save"/>
+
+        <Button
+            android:id="@+id/hashtagifyButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/saved_hashtags"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@+id/saveButton"
+            android:layout_toRightOf="@+id/saveButton"
+            android:text="@string/hashtagify_button"/>
+
+    </RelativeLayout>
+</ScrollView>

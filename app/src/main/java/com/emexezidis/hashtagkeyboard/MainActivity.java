@@ -1,32 +1,50 @@
 package com.emexezidis.hashtagkeyboard;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.IBinder;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "Change IME Tag";
+    FragmentManager fragmentManager;
+    private static Boolean activityVisible;
+    private static MainActivity activityReference;
+
+    SharedPreferences sharedPref;
+
     String defaultHashtagList = "#hello #there #you #can #edit #these #hashtags";
     String processedText;
-
-    FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        firstRunSetup();
+        activityReference = this;
+        sharedPref = this.getSharedPreferences("hashkeyboard", 0);
+
+        handleIntent();
+        checkIfFirstRun();
         showFragment();
+    }
+
+    // Used when the Activity is not already visible:
+    private void handleIntent() {
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+        if (extras != null) {
+            if (extras.getBoolean("changeImeAndClose", false)) {
+                System.out.println("Change IME and close");
+                changeIme();
+                finish();
+            }
+        }
     }
 
     private void showFragment() {
@@ -58,12 +76,7 @@ public class MainActivity extends AppCompatActivity {
         return (processedText);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    private void firstRunSetup() {
+    private void checkIfFirstRun() {
 
         if (getSharedPreferenceInt("firstRun") == 0) {
             saveSharedPreference("hashtags", defaultHashtagList);
@@ -73,7 +86,6 @@ public class MainActivity extends AppCompatActivity {
 
     protected String getSharedPreferenceString(String tag) {
 
-        SharedPreferences sharedPref = this.getSharedPreferences("hashkeyboard", 0);
         String savedValue = sharedPref.getString(tag, "empty");
 
         if (savedValue.equals("empty")) {
@@ -91,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
 
     protected void saveSharedPreferenceInt(String tag, int value) {
 
-        SharedPreferences sharedPref = this.getSharedPreferences("hashkeyboard", 0);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(tag, value);
         editor.apply();
@@ -99,33 +110,44 @@ public class MainActivity extends AppCompatActivity {
 
     protected void saveSharedPreference(String tag, String text) {
 
-        SharedPreferences sharedPref = this.getSharedPreferences("hashkeyboard", 0);
         SharedPreferences.Editor editor = sharedPref.edit();
         editor.putString(tag, text);
         editor.apply();
     }
 
-    @Override
-    protected void onPause() {
+    public void changeIme() {
 
-        super.onPause();
+        InputMethodManager imeManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imeManager != null) {
+            imeManager.showInputMethodPicker();
+        }
     }
 
-    private void backToPreviousIme() {
+    public static boolean isActivityVisible() {
+        return activityVisible;
+    }
 
-        try {
-            InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-            final IBinder token = this.getWindow().getAttributes().token;
-            imm.switchToLastInputMethod(token);
-        } catch (Throwable t) { // java.lang.NoSuchMethodError if API_level<11
-            Log.e(TAG, "cannot set the previous input method:");
-            t.printStackTrace();
+    public static void activityResumed() {
+        activityVisible = true;
+    }
 
-            //TODO: Make this exception handling better
-            InputMethodManager imeManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
-            if (imeManager != null) {
-                imeManager.showInputMethodPicker();
-            }
-        }
+    public static void activityPaused() {
+        activityVisible = false;
+    }
+
+    public static MainActivity getActivityInstance() {
+        return activityReference;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.activityResumed();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        this.activityPaused();
     }
 }

@@ -20,7 +20,7 @@
         <Key
             android:codes="-4"
             android:keyEdgeFlags="right"
-            android:keyLabel="ENTER"
+            android:keyIcon="@drawable/ic_keyboard_white_24dp"
             android:keyWidth="15%p"/>
     </Row>
 </Keyboard>

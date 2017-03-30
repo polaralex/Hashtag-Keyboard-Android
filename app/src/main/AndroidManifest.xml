@@ -18,7 +18,7 @@
         </activity>
 
         <service android:name=".HashKeyboardService"
-                 android:label="@string/simple_ime"
+                 android:label="@string/ime_name"
                  android:permission="android.permission.BIND_INPUT_METHOD">
             <meta-data android:name="android.view.im" android:resource="@xml/method"/>
             <intent-filter>
