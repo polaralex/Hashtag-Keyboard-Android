@@ -5,4 +5,4 @@
 
 #Hashboard is an Android keyboard (IME) that can type a list of hashtags, into any Instagram post, with only one-click.
 
-<img src="drawing.jpg" alt="Drawing" style="width: 300px;"/>
+<img src="http://i.imgur.com/xhlkZTZ.png" alt="Main UI" style="width: 300px;"/>
