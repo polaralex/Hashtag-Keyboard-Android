@@ -4,11 +4,10 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/hashhashhash_launcher_icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -17,12 +16,18 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".HashKeyboardService"
-                 android:label="@string/ime_name"
-                 android:permission="android.permission.BIND_INPUT_METHOD">
-            <meta-data android:name="android.view.im" android:resource="@xml/method"/>
+        <activity android:name=".ScreenSlidePagerActivity"/>
+
+        <service
+            android:name=".HashKeyboardService"
+            android:label="@string/ime_name"
+            android:permission="android.permission.BIND_INPUT_METHOD">
+            <meta-data
+                android:name="android.view.im"
+                android:resource="@xml/method"/>
+
             <intent-filter>
-                <action android:name="android.view.InputMethod" />
+                <action android:name="android.view.InputMethod"/>
             </intent-filter>
         </service>
 

@@ -7,51 +7,73 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    FragmentManager fragmentManager;
-    private static Boolean activityVisible;
+    private SharedPreferences sharedPref;
+
+    public static String HASHTAG_KEYBOARD_PREF_NAME = "hashtagkeyboard";
+
+    private static Boolean activityVisible = false;
     private static MainActivity activityReference;
+    private final int TUTORIAL_RESULT_CODE = 1;
+    private static final String TAG_RETAINED_FRAGMENT = "RetainedFragment";
+    private PopupFragment popupFragment;
 
-    SharedPreferences sharedPref;
-
-    String defaultHashtagList = "#hello #there #you #can #edit #these #hashtags";
-    String processedText;
+    private String defaultHashtagList = "#hello #there #you #can #edit #these #hashtags";
+    private String processedText;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         activityReference = this;
-        sharedPref = this.getSharedPreferences("hashkeyboard", 0);
+        sharedPref = this.getSharedPreferences(HASHTAG_KEYBOARD_PREF_NAME, 0);
 
         handleIntent();
         checkIfFirstRun();
+
         showFragment();
     }
 
-    // Used when the Activity is not already visible:
     private void handleIntent() {
 
+        // Used when the Activity is not already visible:
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
         if (extras != null) {
             if (extras.getBoolean("changeImeAndClose", false)) {
                 System.out.println("Change IME and close");
-                changeIme();
-                finish();
+                changeIme(true);
+            } else if (extras.getBoolean("showTutorial", false)) {
+                showTutorial();
             }
         }
     }
 
     private void showFragment() {
 
-        fragmentManager = getSupportFragmentManager();
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.add(android.R.id.content, new PopupFragment()).commit();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        //Check if fragment already exists:
+        popupFragment = (PopupFragment) fragmentManager.findFragmentByTag(TAG_RETAINED_FRAGMENT);
+
+        if (popupFragment == null) {
+
+            // If the Fragment doesn't already exist:
+            popupFragment = new PopupFragment();
+            fragmentManager.beginTransaction().add(android.R.id.content, popupFragment, TAG_RETAINED_FRAGMENT).commit();
+
+        } else {
+
+            // If the Fragment already exists:
+            fragmentManager.beginTransaction().replace(android.R.id.content, popupFragment).commit();
+        }
     }
 
     protected String hashtagifyString(String input) {
@@ -79,8 +101,26 @@ public class MainActivity extends AppCompatActivity {
     private void checkIfFirstRun() {
 
         if (getSharedPreferenceInt("firstRun") == 0) {
+
             saveSharedPreference("hashtags", defaultHashtagList);
-            saveSharedPreferenceInt("firstRun", 1);
+
+            showTutorial();
+        }
+    }
+
+    private void showTutorial() {
+        Intent intent = new Intent(this, ScreenSlidePagerActivity.class);
+        startActivityForResult(intent, TUTORIAL_RESULT_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == TUTORIAL_RESULT_CODE) {
+            if (resultCode == RESULT_OK) {
+                saveSharedPreferenceInt("firstRun", 1);
+            } else {
+                finish();
+            }
         }
     }
 
@@ -97,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected int getSharedPreferenceInt(String tag) {
 
-        SharedPreferences sharedPref = this.getSharedPreferences("hashkeyboard", 0);
+        SharedPreferences sharedPref = getSharedPreferences(HASHTAG_KEYBOARD_PREF_NAME, 0);
         return (sharedPref.getInt(tag, 0));
     }
 
@@ -115,11 +155,16 @@ public class MainActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    public void changeIme() {
+    public void changeIme(boolean finishActivity) {
 
         InputMethodManager imeManager = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+
         if (imeManager != null) {
             imeManager.showInputMethodPicker();
+        }
+
+        if (finishActivity) {
+            finish();
         }
     }
 
@@ -137,6 +182,30 @@ public class MainActivity extends AppCompatActivity {
 
     public static MainActivity getActivityInstance() {
         return activityReference;
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.change_ime) {
+            changeIme(false);
+            return true;
+        } else if (item.getItemId() == R.id.clear_text) {
+            if (popupFragment != null) {
+                popupFragment.clearText();
+                System.out.println("Trying to clear text");
+
+            } else {
+                System.out.println("IT'S NULLLLLLLL");
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

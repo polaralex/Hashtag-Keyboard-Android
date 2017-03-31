@@ -23,6 +23,12 @@ public class PopupFragment extends Fragment{
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
         super.onViewCreated(view, savedInstanceState);
@@ -55,7 +61,6 @@ public class PopupFragment extends Fragment{
     @Override
     public void onPause() {
         super.onPause();
-        managingActivity.saveSharedPreference("hashtags", mEditText.getText().toString());
     }
 
     private void showSnackbar(String text) {
@@ -63,5 +68,9 @@ public class PopupFragment extends Fragment{
                 .make(managingActivity.findViewById(android.R.id.content), text, Snackbar.LENGTH_SHORT);
 
         snackbar.show();
+    }
+
+    protected void clearText() {
+        mEditText.setText("");
     }
 }

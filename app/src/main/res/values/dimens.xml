@@ -3,4 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="padding_for_intro_screens">16dp</dimen>
+    <dimen name="margin_for_intro_screen_imageviews">16dp</dimen>
 </resources>

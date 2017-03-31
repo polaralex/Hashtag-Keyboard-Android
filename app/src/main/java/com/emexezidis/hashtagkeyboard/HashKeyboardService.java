@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.inputmethodservice.InputMethodService;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputConnection;
 
@@ -21,6 +20,8 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
 
     @Override
     public View onCreateInputView() {
+
+        checkIfFirstRun();
 
         KeyboardView kv = (KeyboardView) getLayoutInflater().inflate(R.layout.keyboard, null);
         Keyboard keyboard = new Keyboard(this, R.xml.hashtag_keys);
@@ -53,20 +54,20 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
                 intent = new Intent(this, MainActivity.class);
 
                 if (MainActivity.isActivityVisible()) {
-                    MainActivity.getActivityInstance().changeIme();
+                    MainActivity.getActivityInstance().changeIme(false);
                 } else {
                     System.out.println("Going to send a Stay Open intent");
                     intent.putExtra("changeImeAndClose", true);
                 }
 
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 break;
 
             case editHashtagButton:
 
                 intent = new Intent(this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 break;
 
@@ -82,8 +83,8 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
 
     private String getCurrentHashtags() {
 
-        SharedPreferences sharedPref = getSharedPreferences("hashkeyboard", 0);
-        hashtags = sharedPref.getString("hashtags", "empty");
+        SharedPreferences sharedPref = getSharedPreferences(MainActivity.HASHTAG_KEYBOARD_PREF_NAME, 0);
+        hashtags = sharedPref.getString("hashtags", "#click #edit #button");
         return (hashtags);
     }
 
@@ -92,7 +93,6 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
         String text = ic.getTextBeforeCursor(100, 0).toString();
 
         if (text.length() != 0) {
-            Log.e("DEBUG", "NO INPUT");
 
             int textLength = text.length();
             int lastOccurenceOfHashtag = text.lastIndexOf('#');
@@ -101,6 +101,17 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
         }
 
         return 0;
+    }
+
+    private void checkIfFirstRun() {
+
+        SharedPreferences sharedPref = getSharedPreferences(MainActivity.HASHTAG_KEYBOARD_PREF_NAME, 0);
+
+        if (sharedPref.getInt("firstRun", 0) == 0) {
+            intent = new Intent(this, MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
     }
 
     @Override
