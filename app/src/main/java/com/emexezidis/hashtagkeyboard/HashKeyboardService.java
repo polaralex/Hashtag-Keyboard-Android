@@ -56,7 +56,6 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
                 if (MainActivity.isActivityVisible()) {
                     MainActivity.getActivityInstance().changeIme(false);
                 } else {
-                    System.out.println("Going to send a Stay Open intent");
                     intent.putExtra("changeImeAndClose", true);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
@@ -92,6 +91,8 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
 
     private int checkForLengthToDelete() {
 
+        // Returns the length of characters for deletion, until the previous
+        // hashtag symbol:
         String text = ic.getTextBeforeCursor(100, 0).toString();
 
         if (text.length() != 0) {

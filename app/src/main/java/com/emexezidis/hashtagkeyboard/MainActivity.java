@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,17 +13,15 @@ import android.view.inputmethod.InputMethodManager;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SharedPreferences sharedPref;
-
     public static String HASHTAG_KEYBOARD_PREF_NAME = "hashtagkeyboard";
-
+    private static final String TAG_RETAINED_FRAGMENT = "RetainedFragment";
     private static Boolean activityVisible = false;
     private static MainActivity activityReference;
     private final int TUTORIAL_RESULT_CODE = 1;
-    private static final String TAG_RETAINED_FRAGMENT = "RetainedFragment";
-    private PopupFragment popupFragment;
 
-    private String defaultHashtagList = "#hello #there #you #can #edit #these #hashtags";
+    private PopupFragment popupFragment;
+    private SharedPreferences sharedPreferences;
+    private String defaultHashtagList = "#you #can #edit #these #hashtags";
     private String processedText;
 
     @Override
@@ -32,12 +29,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         activityReference = this;
-        sharedPref = this.getSharedPreferences(HASHTAG_KEYBOARD_PREF_NAME, 0);
+        sharedPreferences = getSharedPreferences(HASHTAG_KEYBOARD_PREF_NAME, 0);
 
         handleIntent();
         checkIfFirstRun();
-
-        showFragment();
+        showTemplateEditorFragment();
     }
 
     private void handleIntent() {
@@ -56,7 +52,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showFragment() {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.change_ime) {
+            changeIme(false);
+        } else if (item.getItemId() == R.id.clear_text) {
+            if (popupFragment != null) {
+                popupFragment.clearText();
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void showTemplateEditorFragment() {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
@@ -101,23 +116,24 @@ public class MainActivity extends AppCompatActivity {
     private void checkIfFirstRun() {
 
         if (getSharedPreferenceInt("firstRun") == 0) {
-
             saveSharedPreference("hashtags", defaultHashtagList);
-
             showTutorial();
         }
     }
 
     private void showTutorial() {
         Intent intent = new Intent(this, ScreenSlidePagerActivity.class);
+        // TODO: Check this
+        //intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         startActivityForResult(intent, TUTORIAL_RESULT_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         if (requestCode == TUTORIAL_RESULT_CODE) {
             if (resultCode == RESULT_OK) {
-                saveSharedPreferenceInt("firstRun", 1);
+                saveSharedPreference("firstRun", 1);
             } else {
                 finish();
             }
@@ -125,14 +141,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected String getSharedPreferenceString(String tag) {
-
-        String savedValue = sharedPref.getString(tag, "empty");
-
-        if (savedValue.equals("empty")) {
-            return ("");
-        } else {
-            return savedValue;
-        }
+        return sharedPreferences.getString(tag, "");
     }
 
     protected int getSharedPreferenceInt(String tag) {
@@ -141,16 +150,16 @@ public class MainActivity extends AppCompatActivity {
         return (sharedPref.getInt(tag, 0));
     }
 
-    protected void saveSharedPreferenceInt(String tag, int value) {
+    protected void saveSharedPreference(String tag, int value) {
 
-        SharedPreferences.Editor editor = sharedPref.edit();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(tag, value);
         editor.apply();
     }
 
     protected void saveSharedPreference(String tag, String text) {
 
-        SharedPreferences.Editor editor = sharedPref.edit();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(tag, text);
         editor.apply();
     }
@@ -182,30 +191,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static MainActivity getActivityInstance() {
         return activityReference;
-    }
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_bar_menu, menu);
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        if (item.getItemId() == R.id.change_ime) {
-            changeIme(false);
-            return true;
-        } else if (item.getItemId() == R.id.clear_text) {
-            if (popupFragment != null) {
-                popupFragment.clearText();
-                System.out.println("Trying to clear text");
-
-            } else {
-                System.out.println("IT'S NULLLLLLLL");
-            }
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     @Override

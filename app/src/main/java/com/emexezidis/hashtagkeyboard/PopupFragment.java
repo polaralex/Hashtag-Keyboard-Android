@@ -12,7 +12,7 @@ import android.widget.EditText;
 
 public class PopupFragment extends Fragment{
 
-    private EditText mEditText;
+    private EditText editText;
     private MainActivity managingActivity;
 
     @Nullable
@@ -33,18 +33,17 @@ public class PopupFragment extends Fragment{
 
         super.onViewCreated(view, savedInstanceState);
 
-        // Basic Initialization
-        // (I use a reference to the calling activity to use its
-        // public methods):
+        // I use a reference to the calling activity to access its
+        // public methods:
         managingActivity = ((MainActivity)getActivity());
-        mEditText = (EditText) view.findViewById(R.id.saved_hashtags);
-        mEditText.setText(managingActivity.getSharedPreferenceString("hashtags"));
+        editText = (EditText) view.findViewById(R.id.saved_hashtags);
+        editText.setText(managingActivity.getSharedPreferenceString("hashtags"));
 
         final Button hashtagify = (Button) view.findViewById(R.id.hashtagifyButton);
         hashtagify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mEditText.setText(managingActivity.hashtagifyString(mEditText.getText().toString()));
+                editText.setText(managingActivity.hashtagifyString(editText.getText().toString()));
             }
         });
 
@@ -52,8 +51,8 @@ public class PopupFragment extends Fragment{
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                managingActivity.saveSharedPreference("hashtags", mEditText.getText().toString());
-                showSnackbar("Hashtag template saved.");
+                managingActivity.saveSharedPreference("hashtags", editText.getText().toString());
+                showSnackbar("Hashtag Template Saved.");
             }
         });
     }
@@ -71,6 +70,6 @@ public class PopupFragment extends Fragment{
     }
 
     protected void clearText() {
-        mEditText.setText("");
+        editText.setText("");
     }
 }
