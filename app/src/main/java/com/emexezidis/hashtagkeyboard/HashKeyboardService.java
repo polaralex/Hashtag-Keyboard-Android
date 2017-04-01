@@ -58,17 +58,19 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
                 } else {
                     System.out.println("Going to send a Stay Open intent");
                     intent.putExtra("changeImeAndClose", true);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                 }
 
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
                 break;
 
             case editHashtagButton:
 
-                intent = new Intent(this, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
+                if (!MainActivity.isActivityVisible()) {
+                    intent = new Intent(this, MainActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
                 break;
 
             case insertHashtagButton:
@@ -109,7 +111,7 @@ public class HashKeyboardService extends InputMethodService implements KeyboardV
 
         if (sharedPref.getInt("firstRun", 0) == 0) {
             intent = new Intent(this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
     }
